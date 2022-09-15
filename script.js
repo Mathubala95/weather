@@ -1,59 +1,70 @@
-//Creat container
-var container=document.createElement("div");
-container.setAttribute("class","container");
-var row=document.createElement("div");
-row.classList.add("row","m-3");
-container.append(row);
+var div=document.createElement("div");
+div.style.textAlign="center";
+var input =document.createElement("input");
+input.setAttribute("type","text");
+input.setAttribute("id","country");
 
-//fetch restcountry data
-var res=fetch("https://restcountries.com/v2/all")
-res.then((data)=>data.json()).then((value)=>foo(value));
+var button =document.createElement("button");
+button.setAttribute("type","button");
+button.classList.add("btn","btn-primary");
+button.innerHTML="search";
+button.addEventListener("click",foo);
+div.append(input,button);
+document.body.append(div);
+
+var card = document.createElement("div");
+card.setAttribute("class","card");
+card.style.width="18rem";
+card.style.textAlign="center";
+card.style.marginTop="30px";
+card.style.marginLeft="525px";
+var list = document.createElement("ul");
+list.classList.add("list-group","list-group-flush");
+list.style.padding="30px";
+var one=document.createElement("li");
+one.setAttribute("class","list-group-item");
+one.style.padding="15px";
+var two=document.createElement("li");
+two.setAttribute("class","list-group-item");
+two.style.padding="30px";
+var three=document.createElement("li");
+three.setAttribute("class","list-group-item");
+three.style.padding="15px";
+list.append(one,two,three);
+card.append(list);
+document.body.append(card);
 
 
-async function foo(value){
-    
+// let active=document.createElement("div");
+// active.setAttribute("id","Active");
+// let recovered=document.createElement("div");
+// recovered.setAttribute("id","Recovered");
+// let deaths=document.createElement("div");
+// deaths.setAttribute("id","Deaths");
+
+// let err=document.createElement("div");
+// err.setAttribute("id","error");
+
+async function foo(){
     try{
-        for(var i=0;i<value.length;i++){
+        let countryname=document.getElementById("country").value;
+        // console.log(countryname);
+        let url =`https://api.covid19api.com/dayone/country/${countryname}`;
+        let res = await fetch(url);
+        let data= await res.json();
+        // console.log(data); 
+        let index=data.length-1;
+        one.innerHTML=`Total Active:${data[index].Active}`;
+        two.innerHTML=`Total Recoverd:${data[index].Recovered}`;
+        three.innerHTML=`Total Deaths:${data[index].Deaths}`;
+        // active.innerHTML=`Total :${data[index].Active}`;       
+        // recovered.innerHTML=`Total :${data[index].Recovered}`; 
+        // deaths.innerHTML=`Total :${data[index].Deaths}`;                
+    }
+    catch(error){
+    //    err.innerHTML=`Data Not Found!!!!`;
+    alert("Data is not found!");
+         }
+    }
     
-            row.innerHTML+=`<div class="col-lg-4">            
-               <div class="card border-secondary mb-3 text-center" style="max-width: 18rem;">
-               <div class="card-header">${value[i].name}</div>
-                 <div class="card-body text-secondary">
-                    <img src="${value[i].flag}" alt="flags" width=200px>
-                    <p class="card-text">Capital: ${value[i].capital}</p>
-                    <p class="card-text">Region: ${value[i].region}</p>
-                     <p class="card-text">Country code: ${value[i].alpha3Code}</p>
-                     <p id="wet"></p>                                 
-                     
-                     <button class="btn btn-primary ">Click for Weather</button>
-                  
-                                          
-                 </div>
-             </div>
-            </div>`};
-    }catch (error){
-      console.log("error!!");
-   }
-   //Give event to the button to get weather data
-   let wetCli=document.getElementsByClassName("btn");
-    for (let i=0;i<wetCli.length;i++){
-    wetCli[i].addEventListener("click",async()=>{
-    try {
-        let wet=document.querySelectorAll("#wet");
-                                                 
-        let url=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${value[i].latlng[0]}&lon=${value[i].latlng[1]}&appid=5cf37c0d357e5b8332ccc4d1b98cddca`);
-        let url1=await url.json();
-        console.log(url1);
-                                           
-      wet[i].innerHTML=`Country Temp: ${url1.main.temp}F`;
-                                           
-                                               
-      }
-       catch(e){
-       console.log("error!!");
-        }
-      });
-      }
- }
-document.body.append(container); 
-foo();
+                            
